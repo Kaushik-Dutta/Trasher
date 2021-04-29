@@ -1,4 +1,5 @@
 package com.mail.delete;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public class GmailDeleteMail {
 		properties.setProperty("mail.imap.socketFactory.port", port);
 
 		Session session = Session.getDefaultInstance(properties);
+		String subject="abc";
 
 		try {
 			Store store = session.getStore("imap");
@@ -46,40 +48,47 @@ public class GmailDeleteMail {
 			Folder inbox = store.getFolder("Inbox");
 			inbox.open(Folder.READ_WRITE);
 
-//			Folder trash = store.getFolder("[Gmail]/Trash");
-//			inbox.open(Folder.READ_WRITE);
+			Folder trash = store.getFolder("[Gmail]/Trash");
+			trash.open(Folder.READ_WRITE);
 
 			Message[] message = inbox.getMessages();
 			//System.out.println(inbox.getMessages().length);
 
-//			List<String> list = Arrays.asList("Videos uploaded");
-//			
-//			for(Message m : message)
-//			{
-//				String subject = m.getSubject();
-//				for(String l:list)
-//				{
-//					if(subject.contains(l))
-//					{
-//						inbox.copyMessages(new Message[] {m}, trash);
-//						System.out.println("Deleted"+subject);
-//					}
-//				}
-//			}
+			List<String> list = Arrays.asList("engimatrojan,","Dipendra Meena","Security alert",
+					"Netflix tonight?",
+					"Everyone's eyeing");
 			
-			Map<String,Integer> map =  new HashMap();
-			for(Message m:message)
+			for(int i=0;i<message.length;i++)
 			{
-				String subject = m.getSubject();
-				if(map.containsKey(subject))
+				Message m = message[i];
+				subject = m.getSubject();
+				System.out.println(subject);
+				for(String l:list)
 				{
-					map.put(subject, map.get(subject)+1);
-					if(map.get(subject)>0)
-						System.out.println(subject);
+					if(subject.contains(l))
+					{
+						inbox.copyMessages(new Message[] {m}, trash);
+						System.out.println("Deleted"+subject);
+					
+					}
 				}
-				else
-					map.put(subject, 1);
 			}
+			store.close();
+			//Check items in inbox and keep their count in Map
+			// this helps in finding some filters to delete
+//			Map<String,Integer> map =  new HashMap<String,Integer>();
+//			for(Message m:message)
+//			{
+//				subject = m.getSubject();
+//				if(map.containsKey(subject))
+//				{
+//					map.put(subject, map.get(subject)+1);
+//					if(map.get(subject)>1)
+//						System.out.println(subject);
+//				}
+//				else
+//					map.put(subject, 1);
+//			}
 			
 		} catch (NoSuchProviderException e) {
 			// TODO Auto-generated catch block
@@ -88,6 +97,9 @@ public class GmailDeleteMail {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
